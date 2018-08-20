@@ -1,3 +1,1 @@
-# dj-todo-client
-
-https://dj-todo.firebaseapp.com/#/
+# app-testing-client

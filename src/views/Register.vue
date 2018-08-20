@@ -6,7 +6,7 @@
       <hr>
       <div class="form-group">
         <label>Name</label>
-        <input id="name" class="form-control" type="text" placeholder="Jonhdoe" v-model="name">
+        <input id="name" class="form-control" type="text" placeholder="Jonh Doe" v-model="name">
       </div>
       <div class="form-group">
         <label>Email</label>

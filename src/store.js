@@ -59,12 +59,16 @@ export default new Vuex.Store({
             swal(response.data.message, {
               icon: 'success'
             })
+            let name = response.data.name
+            let firstname = name.split(' ')
+            let nameOne = firstname[0]
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('name', response.data.name)
             localStorage.setItem('email', response.data.email)
             localStorage.setItem('phone', response.data.phone)
             localStorage.setItem('fb', 0)
             commit('userLoggedIn')
+            commit('setUsername', nameOne)
             router.push('/home')
           }
         })
@@ -119,7 +123,10 @@ export default new Vuex.Store({
           localStorage.setItem('name', response.data.name)
           localStorage.setItem('email', response.data.email)
           localStorage.setItem('phone', response.data.phone)
+          let firstname = localStorage.getItem('name').split(' ')
+          let nameOne = firstname[0]
           commit('userLoggedIn')
+          commit('setUsername', nameOne)
           router.push('/home')
         })
         .catch(function (err) {

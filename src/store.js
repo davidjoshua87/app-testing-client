@@ -12,22 +12,23 @@ const baseURL = 'https://immense-ravine-38119.herokuapp.com'
 export default new Vuex.Store({
   state: {
     isLogin: false,
-    // notFbLogin: true,
     tasks: [],
     weather: {},
-    result: {}
+    result: {},
+    username: '',
   },
   mutations: {
     userLoginFB (state) {
       state.isLogin = true
-      // state.notFbLogin = false
     },
     userLoggedIn (state) {
       state.isLogin = true
     },
     userLoggedOut (state) {
       state.isLogin = false
-      // state.notFbLogin = true
+    },
+    setUsername (state, nameOne) {
+      state.username = nameOne
     },
     setTodo (state, todoList) {
       state.tasks = todoList.data.list
@@ -132,15 +133,18 @@ export default new Vuex.Store({
     loginFB ({
       commit
     }, profile) {
+      let name = profile.name
       let firstname = profile.name.split(' ')
-      let name = firstname[0]
-      let email = profile.email || `${name}@mail.com`
+      let nameOne = firstname[0]
+      let email = profile.email
       let phone = profile.phone || '081234567890'
       let fbId = profile.id
+      let password = 'abc12345'
       axios.post(`${baseURL}/index/loginfb`, {
         name,
         email,
         phone,
+        password,
         fbId
       })
         .then(function (response) {
@@ -155,6 +159,7 @@ export default new Vuex.Store({
           localStorage.setItem('phone', response.data.phone)
           localStorage.setItem('fb', 1)
           commit('userLoginFB')
+          commit('setUsername', nameOne)
           router.push('/home')
         })
         .catch(function (err) {

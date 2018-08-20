@@ -78,7 +78,7 @@ export default {
   methods: {
     openFbLoginDialog () {
       FB.login(this.checkLoginState, {
-        scope: 'public_profile'
+        scope: ['public_profile', 'email']
       })
     },
     checkLoginState: function (response) {
@@ -91,9 +91,6 @@ export default {
           console.log(profile, 'dataaaaaaa')
         })
       }
-    },
-    sendtoRegis () {
-      window.location.href = 'register.html'
     },
     reset () {
       this.email = ''

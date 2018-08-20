@@ -21,6 +21,7 @@
           <div class="form-group">
             <label>Password:</label>
             <input v-model="password" class="form-control" id="password" type="password" placeholder="Your Password">
+            <p>Your password is "abc12345" if you login using Facebook and reset your password right now</p>
           </div>
           <div>
             <label>Confirm Password</label>

@@ -50,7 +50,7 @@ export default {
   name: 'home',
   data () {
     return {
-      username: localStorage.getItem('name'),
+      // username: localStorage.getItem('name'),
       notDone: 0,
       finished: 0,
       search: ''
@@ -59,10 +59,10 @@ export default {
   computed: {
     ...mapState([
       'isLogin',
-      // 'notFbLogin',
       'tasks',
       'weather',
-      'result'
+      'result',
+      'username'
     ])
   },
   beforeCreate () {

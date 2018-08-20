@@ -4,51 +4,53 @@ import axios from 'axios'
 import swal from 'sweetalert'
 import router from './router'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
-const baseURL = 'https://boxing-celsius-81252.herokuapp.com'
+const baseURL = 'https://immense-ravine-38119.herokuapp.com'
+// const baseURL = 'http://localhost:3000'
 
 export default new Vuex.Store({
   state: {
     isLogin: false,
-    notFbLogin: true,
+    // notFbLogin: true,
     tasks: [],
     weather: {},
-    result: {},
+    result: {}
   },
   mutations: {
     userLoginFB (state) {
       state.isLogin = true
-      state.notFbLogin = false
+      // state.notFbLogin = false
     },
     userLoggedIn (state) {
       state.isLogin = true
     },
     userLoggedOut (state) {
       state.isLogin = false
-      state.notFbLogin = true
+      // state.notFbLogin = true
     },
     setTodo (state, todoList) {
       state.tasks = todoList.data.list
     },
     setWeather (state, weatherData) {
-      state.weather = weatherData.data.data[0]
+      state.weather = weatherData.data.data
     },
     setResult (state, resultData) {
       state.result = resultData.data
-    },
+    }
   },
   actions: {
     loginUser ({
       commit
     }, userData) {
+      let email = userData.email
+      let password = userData.password
       axios.post(`${baseURL}/index/login`, {
-          username: userData.username,
-          email: userData.email,
-          password: userData.password
-        })
+        email,
+        password
+      })
         .then(function (response) {
-          if (response.data.message != 'Success login') {
+          if (response.data.message !== 'Success login') {
             swal(response.data.message, {
               icon: 'warning'
             })
@@ -57,15 +59,18 @@ export default new Vuex.Store({
               icon: 'success'
             })
             localStorage.setItem('token', response.data.token)
-            localStorage.setItem('username', response.data.username)
+            localStorage.setItem('name', response.data.name)
             localStorage.setItem('email', response.data.email)
+            localStorage.setItem('phone', response.data.phone)
             localStorage.setItem('fb', 0)
             commit('userLoggedIn')
             router.push('/home')
           }
         })
-        .catch(function (error) {
-          swal(error.response.data.message, {
+        .catch(function (err) {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
         })
@@ -73,11 +78,16 @@ export default new Vuex.Store({
     registerNewUser ({
       dispatch
     }, userData) {
+      let name = userData.name
+      let email = userData.email
+      let phone = userData.phone
+      let password = userData.password
       axios.post(`${baseURL}/index/register`, {
-          username: userData.username,
-          email: userData.email,
-          password: userData.password
-        })
+        name,
+        email,
+        phone,
+        password
+      })
         .then(function (response) {
           swal({
             title: 'Success',
@@ -97,19 +107,21 @@ export default new Vuex.Store({
     loginAfterRegister ({
       commit
     }, userData) {
+      let email = userData.email
+      let password = userData.password
       axios.post(`${baseURL}/index/login`, {
-          username: userData.username,
-          password: userData.password
-        })
+        email,
+        password
+      })
         .then(function (response) {
           localStorage.setItem('token', response.data.token)
-          localStorage.setItem('username', response.data.username)
+          localStorage.setItem('name', response.data.name)
           localStorage.setItem('email', response.data.email)
-          localStorage.setItem('email', response.data.email)
+          localStorage.setItem('phone', response.data.phone)
           commit('userLoggedIn')
           router.push('/home')
         })
-        .catch(function (error) {
+        .catch(function (err) {
           swal({
             title: 'Error!',
             text: err.response.data.message,
@@ -120,14 +132,17 @@ export default new Vuex.Store({
     loginFB ({
       commit
     }, profile) {
-      let username = profile.username
-      let email = profile.email
+      let firstname = profile.name.split(' ')
+      let name = firstname[0]
+      let email = profile.email || `${name}@mail.com`
+      let phone = profile.phone || '081234567890'
       let fbId = profile.id
       axios.post(`${baseURL}/index/loginfb`, {
-          username: username,
-          email: email,
-          fbId: fbId
-        })
+        name,
+        email,
+        phone,
+        fbId
+      })
         .then(function (response) {
           swal({
             title: 'Success',
@@ -135,8 +150,9 @@ export default new Vuex.Store({
             icon: 'success'
           })
           localStorage.setItem('token', response.data.token)
-          localStorage.setItem('username', response.data.username)
+          localStorage.setItem('name', response.data.name)
           localStorage.setItem('email', response.data.email)
+          localStorage.setItem('phone', response.data.phone)
           localStorage.setItem('fb', 1)
           commit('userLoginFB')
           router.push('/home')
@@ -153,10 +169,10 @@ export default new Vuex.Store({
       commit
     }, token) {
       axios.get(`${baseURL}/todo/show`, {
-          headers: {
-            token: token
-          }
-        })
+        headers: {
+          token
+        }
+      })
         .then(function (todoList) {
           commit('setTodo', todoList)
         })
@@ -178,8 +194,8 @@ export default new Vuex.Store({
         .catch(function (err) {
           swal({
             title: 'Error!',
-            text: 'Something went wrong! Please contact the developer',
-            icon: 'Warning'
+            text: err.response.data.message,
+            icon: 'warning'
           })
         })
     },
@@ -193,29 +209,33 @@ export default new Vuex.Store({
         .catch(function (err) {
           swal({
             title: 'Error!',
-            text: 'Something went wrong! Please contact the developer',
-            icon: 'Warning'
+            text: err.response.data.message,
+            icon: 'warning'
           })
         })
     },
     addNewtask ({
       dispatch
     }, taskDetail) {
+      let todo = taskDetail.task
+      let token = taskDetail.token
       axios.post(`${baseURL}/todo/add`, {
-          todo: taskDetail.task
-        }, {
-          headers: {
-            token: taskDetail.token
-          }
-        })
+        todo
+      }, {
+        headers: {
+          token
+        }
+      })
         .then(function (response) {
           swal(response.data.message, {
             icon: 'success'
           })
-          dispatch('getAllTasks', taskDetail.token)
+          dispatch('getAllTasks', token)
         })
         .catch(function (err) {
-          swal(err.response.data.message, {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
         })
@@ -223,19 +243,22 @@ export default new Vuex.Store({
     finishTask ({
       dispatch
     }, taskDetail) {
+      let token = taskDetail.token
       axios.put(`${baseURL}/todo/finish/${taskDetail.taskId}`, {}, {
-          headers: {
-            token: taskDetail.token
-          }
-        })
+        headers: {
+          token
+        }
+      })
         .then(function (response) {
           swal(response.data.message, {
             icon: 'success'
           })
-          dispatch('getAllTasks', taskDetail.token)
+          dispatch('getAllTasks', token)
         })
         .catch(function (err) {
-          swal(err.response.data.message, {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
         })
@@ -243,58 +266,68 @@ export default new Vuex.Store({
     deleteTask ({
       dispatch
     }, taskDetail) {
+      let token = taskDetail.token
       axios.delete(`${baseURL}/todo/delete/${taskDetail.taskId}`, {
-          headers: {
-            token: taskDetail.token
-          }
-        })
+        headers: {
+          token
+        }
+      })
         .then(function (response) {
           swal(response.data.message, {
             icon: 'success'
           })
-          dispatch('getAllTasks', taskDetail.token)
+          dispatch('getAllTasks', token)
         })
         .catch(function (err) {
-          swal(err.response.data.message, {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
         })
     },
-    updateTask({
+    updateTask ({
       dispatch
     }, taskDetail) {
+      let todo = taskDetail.task
+      let token = taskDetail.token
       axios.put(`${baseURL}/todo/update/${taskDetail.taskId}`, {
-          todo: taskDetail.task
-        }, {
-          headers: {
-            token: taskDetail.token
-          }
-        })
+        todo
+      }, {
+        headers: {
+          token
+        }
+      })
         .then(function (response) {
           swal(response.data.message, {
             icon: 'success'
           })
-          dispatch('getAllTasks', taskDetail.token)
+          dispatch('getAllTasks', token)
         })
         .catch(function (err) {
-          swal(err.response.data.message, {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
         })
     },
-    getTaskByStatus({
+    getTaskByStatus ({
       commit
     }, taskDetail) {
+      let token = taskDetail.token
       axios.get(`${baseURL}/todo/show/${taskDetail.status}`, {
-          headers: {
-            token: taskDetail.token
-          }
-        })
+        headers: {
+          token
+        }
+      })
         .then(function (taskData) {
           commit('setTodo', taskData)
         })
         .catch(function (err) {
-          swal(err.response.data.message, {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
         })
@@ -302,80 +335,88 @@ export default new Vuex.Store({
     updateProfile ({
       commit
     }, userData) {
-      //Change username and email only
-      if (userData.newPass == '' && userData.confirm == '') {
-        axios.put(`${baseURL}/user/update-user`, {
-            username: userData.username,
-            email: userData.email,
-            new_password: userData.newPass,
-            old_password: userData.oldPass
-          }, {
-            headers: {
-              token: userData.token
-            }
-          })
-          .then(function (response) {
-            let message = response.data.message
-            if (message !== 'Successfully updated your profile') {
-              swal(message, {
-                icon: 'warning'
-              })
-            } else {
-              swal(message, {
-                icon: 'success'
-              })
-              localStorage.removeItem('username')
-              localStorage.setItem('username', userData.username)
-              localStorage.setItem('email', userData.email)
-              router.push('/home')
-            }
-          })
-          .catch(function (err) {
-            swal(err.response.data.message, {
+      let name = userData.name
+      let email = userData.email
+      let phone = userData.phone
+      let password = userData.password
+      let token = userData.token
+      axios.put(`${baseURL}/user/update-user`, {
+        name,
+        email,
+        phone,
+        password
+      }, {
+        headers: {
+          token
+        }
+      })
+        .then(function (response) {
+          let message = response.data.message
+          if (message !== 'Successfully updated your profile') {
+            swal(message, {
               icon: 'warning'
             })
-          })
-      }
-      //Change username, email + password 
-      else {
-        if (new_password != confirm) {
-          swal('Password and confirm password is not the same!', {
+          } else {
+            swal(message, {
+              icon: 'success'
+            })
+            localStorage.removeItem('name')
+            localStorage.removeItem('email')
+            localStorage.removeItem('phone')
+            localStorage.setItem('name', userData.name)
+            localStorage.setItem('email', userData.email)
+            localStorage.setItem('phone', userData.phone)
+            router.push('/home')
+          }
+        })
+        .catch(function (err) {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
             icon: 'warning'
           })
-        } else {
-          axios.put(`${baseURL}/user/update-user`, {
-            username: username,
-            email: email,
-            new_password: new_password,
-            old_password: old_password
-          }, {
-            headers: {
-              token: userData.token
-            }
-          })
-            .then(function (response) {
-              let message = response.data.message
-              if (message !== 'Successfully updated your profile') {
-                swal(message, {
-                  icon: 'warning'
-                })
-              } else {
-                swal(message, {
-                  icon: 'success'
-                })
-                localStorage.removeItem('username')
-                localStorage.setItem('username', userData.username)
-                localStorage.setItem('email', userData.email)
-                router.push('/home')
-              }
-            })
-            .catch(function (err) {
-              swal(err.response.data.message, {
-                icon: 'warning'
-              })
-            })
+        })
+    },
+    changePassword ({
+      commit
+    }, userData) {
+      let name = localStorage.getItem('name')
+      let email = localStorage.getItem('email')
+      let phone = localStorage.getItem('phone')
+      let oldPassword = userData.oldPassword
+      let newPassword = userData.newPassword
+      let token = userData.token
+      axios.put(`${baseURL}/user//change-password`, {
+        name,
+        email,
+        phone,
+        oldPassword,
+        newPassword
+      }, {
+        headers: {
+          token
         }
-      }
+      })
+        .then(function (response) {
+          let message = response.data.message
+          if (message !== 'Successfully changed your password') {
+            swal(message, {
+              icon: 'warning'
+            })
+          } else {
+            swal(message, {
+              icon: 'success'
+            })
+            router.push('/home')
+          }
+        })
+        .catch(function (err) {
+          swal({
+            title: 'Error!',
+            text: err.response.data.message,
+            icon: 'warning'
+          })
+        })
     }
   }
 })

@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import Login from './views/Login.vue'
 import Register from './views/Register.vue'
 import Profile from './views/Profile.vue'
+import ChangePassword from './views/ChangePassword'
 import Todo from './views/Todo.vue'
 
 Vue.use(Router)
@@ -28,6 +29,11 @@ export default new Router({
     path: '/profile',
     name: 'profile',
     component: Profile
+  },
+  {
+    path: '/change-password',
+    name: 'changePassword',
+    component: ChangePassword
   },
   {
     path: '/todo',

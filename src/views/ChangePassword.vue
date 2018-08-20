@@ -2,39 +2,26 @@
   <div class="container">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-      <h3 class="text-center">Profile</h3>
+      <h3 class="text-center">Change Password</h3>
       <hr>
       <div class="formProfile">
         <div class="formBody">
           <div class="form-group">
-            <label>Name</label>
-            <input id="name" class="form-control" type="text" v-model="name">
+            <label>Old Password:</label>
+            <input v-model="oldPassword" class="form-control" id="oldPassword" type="password" placeholder="Your old Password">
           </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input id="email" class="form-control" type="email" v-model="email">
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input id="phone" class="form-control" type="tel" v-model="phone">
-          </div>
-          <div class="form-group">
-            <label>Password:</label>
-            <input v-model="password" class="form-control" id="password" type="password" placeholder="Your Password">
+           <div class="form-group">
+            <label>New Password:</label>
+            <input v-model="newPassword" class="form-control" id="newPassword" type="password" placeholder="Min 8 alphanumeric characters">
           </div>
           <div>
-            <label>Confirm Password</label>
-            <input v-model="confirm" class="form-control" type="password" placeholder="Confirm Password">
+            <label>Confirm New Password</label>
+            <input v-model="confirm" class="form-control" type="password" placeholder="Confirm New Password">
           </div>
           <br>
           <div class="form-group">
-            <button v-on:click="updateUser" type="submit" class="btn btn-default">
-              <b>Update</b>
-            </button>
-          </div>
-          <div class="form-group">
             <button v-on:click="changePassword" type="submit" class="btn btn-default">
-              <b>Change Password</b>
+              <b>Change</b>
             </button>
           </div>
           <div class="form-group">
@@ -54,13 +41,11 @@
 import swal from 'sweetalert'
 
 export default {
-  name: 'profile',
+  name: 'changePassword',
   data () {
     return {
-      name: localStorage.getItem('name'),
-      phone: localStorage.getItem('phone'),
-      email: localStorage.getItem('email'),
-      password: '',
+      oldPassword: '',
+      newPassword: '',
       confirm: ''
     }
   },
@@ -79,10 +64,7 @@ export default {
   },
   methods: {
     back () {
-      this.$router.push('/home')
-    },
-    changePassword () {
-      this.$router.push('/change-password')
+      this.$router.push('/profile')
     },
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
@@ -93,36 +75,26 @@ export default {
         alert('Correct them errors!')
       })
     },
-    updateUser () {
+    changePassword () {
       let userData = {
-        name: this.name,
-        phone: this.phone,
-        email: this.email,
-        password: this.password,
+        oldPassword: this.oldPassword,
+        newPassword: this.newPassword,
         token: localStorage.getItem('token')
       }
-      if (this.name === '') {
-        swal('Name must be filled!', {
+      if (this.oldPassword === '') {
+        swal('Old password must be filled!', {
           icon: 'warning'
         })
-      } else if (this.email === '') {
-        swal('Email must be filled!', {
+      } else if (this.newPassword === '') {
+        swal('New password must be filled!', {
           icon: 'warning'
         })
-      } else if (this.phone === '') {
-        swal('Phone must be filled!', {
-          icon: 'warning'
-        })
-      } else if (this.password === '') {
-        swal('Password must be filled!', {
-          icon: 'warning'
-        })
-      } else if (this.password !== this.confirm) {
-        swal('Password and confirm password is not the same!', {
+      } else if (this.newPassword !== this.confirm) {
+        swal('New password and confirm password is not the same!', {
           icon: 'warning'
         })
       } else {
-        this.$store.dispatch('updateProfile', userData)
+        this.$store.dispatch('changePassword', userData)
       }
     }
   }

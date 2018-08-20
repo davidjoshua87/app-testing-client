@@ -1,5 +1,6 @@
 .DS_Store
 .jshintrc
+.dist
 node_modules
 /dist
 

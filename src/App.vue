@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav v-if="isLogin" class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <router-link class="navbar-brand" to="home">DJ-TODO</router-link>
+      <router-link class="navbar-brand" to="home">TODO</router-link>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -15,7 +15,7 @@
             <router-link class="btn btn-dark" to="todo">Todo</router-link>
           </li>
           <li class="navbar-nav active">
-            <router-link v-if="notFbLogin" class="btn btn-dark logoutBtn" to="profile">Profile</router-link>
+            <router-link class="btn btn-dark logoutBtn" to="profile">Profile</router-link>
           </li>
         </ul>
         <button class="btn btn-dark" @click="logout">Logout</button>
@@ -50,11 +50,14 @@ export default {
               icon: 'success'
             })
             localStorage.removeItem('token')
-            localStorage.removeItem('username')
+            localStorage.removeItem('name')
+            localStorage.removeItem('phone')
             localStorage.removeItem('email')
             localStorage.removeItem('fb')
             this.$store.commit('userLoggedOut')
             this.$router.push('/')
+          } else {
+            swal('Failed Logged out')
           }
         })
     }

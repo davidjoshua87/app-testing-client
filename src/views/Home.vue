@@ -1,18 +1,18 @@
 <template>
   <div class="home">
     <h1 class="title">
-      Willkommen,
+      Welcome,
       <a>{{ username }}</a>
     </h1>
     <div class="taskList">
       <h5>You currently have
         <div class="taskListCount">
-          <strong>{{ notDone }} task(s)</strong>
+          <strong>{{ notDone }} task</strong>
         </div>
         not done yet
         <i class="fas fa-times-circle"></i>
         <div class="taskListCount">
-          <strong>{{ finished }} task(s)</strong>
+          <strong>{{ finished }} task</strong>
         </div>
         finished
         <i class="fas fa-check-square"></i>
@@ -20,12 +20,12 @@
     </div>
     <br>
     <div class="weatherInfo">
-      <h4>{{ weather.location.name }}</h4>
+      <h4>{{ weather.observationpoint }}</h4>
       <h2>
-        <strong>{{ weather.current.temperature}}&#x2103;</strong>
+        <strong>{{ weather.temperature }}&#x2103;</strong>
       </h2>
-      <img :src="weather.current.imageUrl">
-      <h6>{{ weather.current.day}}, {{ weather.current.date}}</h6>
+      <img :src="weather.imageUrl">
+      <h6>{{ weather.day }}, {{ weather.date }}</h6>
     </div>
     <br>
     <div class="search">
@@ -50,7 +50,7 @@ export default {
   name: 'home',
   data () {
     return {
-      username: localStorage.getItem('username'),
+      username: localStorage.getItem('name'),
       notDone: 0,
       finished: 0,
       search: ''
@@ -59,7 +59,7 @@ export default {
   computed: {
     ...mapState([
       'isLogin',
-      'notFbLogin',
+      // 'notFbLogin',
       'tasks',
       'weather',
       'result'
@@ -73,13 +73,13 @@ export default {
     this.getTaskStatuses()
     let fbToken = localStorage.getItem('fb')
     let token = localStorage.getItem('token')
-    if (token !== null) {
+    if (token === null) {
+      this.$router.push('/')
+    } else {
       if (fbToken === '1') {
         this.$store.commit('userLoginFB')
       }
       this.$store.commit('userLoggedIn')
-    } else {
-      this.$router.push('/')
     }
   },
   methods: {
@@ -136,6 +136,7 @@ export default {
     margin-right: auto;
     margin-left: auto;
     margin-top: 2%;
+    margin-bottom: 2%;
     padding: 1%;
     background-color: #f0ffff;
     border: 1px solid #e6e6e6;
@@ -171,7 +172,7 @@ export default {
     margin-left: auto;
     margin-top: 2%;
     padding: 1%;
-    background-color: #f0ffff;
+    background-color: #F5F5DC;
     border: 1px solid black;
   }
 

@@ -2,23 +2,27 @@
   <div class="container">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-      <h3 class="text-center">DJ-Todo</h3>
+      <h3 class="text-center">Todo</h3>
       <hr>
       <div class="form-group">
-        <label>Username</label>
-        <input id="username" class="form-control" type="text" placeholder="jonhdoe" v-model="username">
+        <label>Name</label>
+        <input id="name" class="form-control" type="text" placeholder="Jonhdoe" v-model="name">
       </div>
       <div class="form-group">
         <label>Email</label>
-        <input id="email" class="form-control" type="text" placeholder="jonhdoe@mail.com" v-model="email">
+        <input id="email" class="form-control" type="email" placeholder="jonhdoe@mail.com" v-model="email">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input id="phone" class="form-control" type="tel" placeholder="081234567890" v-model="phone">
       </div>
       <div class="form-group">
         <label>Password</label>
-        <input type="password" class="form-control" placeholder="Min 6 alphanumeric characters" v-model="password">
+        <input type="password" class="form-control" placeholder="Min 8 alphanumeric characters" v-model="password">
       </div>
       <div>
         <label>Confirm Password</label>
-        <input type="password" class="form-control" placeholder="Min 6 alphanumeric characters" v-model="confirm">
+        <input type="password" class="form-control" placeholder="Min 8 alphanumeric characters" v-model="confirm">
       </div>
       <br>
       <div class="form-group">
@@ -43,8 +47,9 @@ export default {
   name: 'register',
   data () {
     return {
-      username: '',
+      name: '',
       email: '',
+      phone: '',
       password: '',
       confirm: ''
     }
@@ -53,25 +58,29 @@ export default {
     validateBeforeSubmit () {
       this.$validator.validateAll().then((result) => {
         if (result) {
-          alert('Form Submitted!');
+          alert('Form Submitted!')
           return
         }
-
         alert('Correct them errors!')
       })
     },
     register () {
       let userData = {
-        username: this.username,
+        name: this.name,
         email: this.email,
+        phone: this.phone,
         password: this.password
       }
-      if (this.username === '') {
-        swal('Username must be filled!', {
+      if (this.name === '') {
+        swal('Name must be filled!', {
           icon: 'warning'
         })
       } else if (this.email === '') {
         swal('Email must be filled!', {
+          icon: 'warning'
+        })
+      } else if (this.phone === '') {
+        swal('Phone must be filled!', {
           icon: 'warning'
         })
       } else if (this.password === '') {
